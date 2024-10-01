@@ -2,11 +2,11 @@
 @inject AttractionsService attractionService
 
 <div style="display: flex; align-items: center;">
-    <div class="form-group mx-sm-3">
+    <div class="form-group mx-sm-3 pr-2">
         <input type="text" class="form-control" id="searchTerm" @oninput="OnInput">
     </div>
 
-    <button type="button" class="btn btn-primary ml-5" @onclick="SearchAttractions">Submit</button>
+    <button type="button" class="btn btn-primary ml-5 pl-2" @onclick="SearchAttractions">Submit</button>
 </div>
 
 <div class="pt-3">
@@ -16,27 +16,31 @@
     }
     else if (ticketMasterAttractionsDto._Embedded is null)
     {
-        <img src="/noresultsfound.svg" />
+        <div class="d-flex justify-content-center">
+            <img src="/noresultsfound.svg" />
+        </div>
     }
     else
     {
-        @foreach (var attraction in ticketMasterAttractionsDto._Embedded.Attractions)
-        {
-            <div class="card" style="width: 18rem;" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url))">
-                <div class="card-body">
-                    <span style="display: inline-block;"><img src="@attraction.Images[0].Url" width="50" height="50" alt="Card image cap"></span>
-                    <span style="display: inline-block;"><h6 class="card-title">@attraction.Name</h6></span>
+        
+            @foreach (var attraction in ticketMasterAttractionsDto._Embedded.Attractions)
+            {
+            <div class="card d-flex justify-content-center" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url))">
+                    <div class="card-body">
+                        <span style="display: inline-block;"><img src="@attraction.Images[0].Url" width="50" height="50" alt="Card image cap"></span>
+                        <span style="display: inline-block;"><h6 class="card-title">@attraction.Name</h6></span>
+                    </div>
                 </div>
-            </div>
-        }
-        @if (selectedAttractionId != "")
-        {
-            <div class="mx-auto text-center pt-3">
-                <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}")">
-                    <div class="btn btn-primary">Select</div>
-                </NavLink>
-            </div>
-        }
+            }
+            @if (selectedAttractionId != "")
+            {
+                <div class="mx-auto text-center pt-3">
+                    <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}")">
+                        <div class="btn btn-primary">Select</div>
+                    </NavLink>
+                </div>
+            }
+        
     }
 </div>
 
