@@ -1,0 +1,21 @@
+@page "/counter/{attractionId}"
+@inject NavigationManager Navigation
+
+<h1>Event Details for Attraction @AttractionId</h1>
+<h1>Event Details for Attraction @ImageUrl</h1>
+
+
+@code {
+    [Parameter]
+    public string AttractionId { get; set; }
+    
+    public string ImageUrl { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        ImageUrl = query["imageUrl"];
+    }
+}
