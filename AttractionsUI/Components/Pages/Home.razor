@@ -9,14 +9,14 @@
     <button type="button" class="btn btn-primary ml-5" @onclick="SearchAttractions">Submit</button>
 </div>
 
-<div>
+<div class="pt-3">
     @if (ticketMasterAttractionsDto is null)
     {
         <p>Loading</p>
     }
     else if (ticketMasterAttractionsDto._Embedded is null)
     {
-        <p>No Attractions Found!</p>
+        <img src="/noresultsfound.svg" />
     }
     else
     {
@@ -29,8 +29,12 @@
                 </div>
             </div>
         }
-        <a href="#" class="btn btn-primary">Select</a>
-        <p>@selectedAttractionId</p>
+        @if (selectedAttractionId != "")
+        {
+            <div class="mx-auto text-center pt-3">
+                <a href="#" class="btn btn-primary">Select</a>
+            </div>
+        }
     }
 </div>
 
@@ -54,6 +58,7 @@
     {
         var attractionsResponse = await attractionService.GetAttractionsAsync(searchTerm);
         ticketMasterAttractionsDto = attractionsResponse;
+        selectedAttractionId = "";
     }
 
     private void HandleCardClick(string id)
