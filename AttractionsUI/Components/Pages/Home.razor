@@ -1,5 +1,63 @@
 ﻿@page "/"
+@inject AttractionsService attractionService
 
-<h1>Hello, world!</h1>
+<div style="display: flex; align-items: center;">
+    <div class="form-group mx-sm-3">
+        <input type="text" class="form-control" id="searchTerm" @oninput="OnInput">
+    </div>
 
-Welcome to your new app.
+    <button type="button" class="btn btn-primary ml-5" @onclick="SearchAttractions">Submit</button>
+</div>
+
+<div>
+    @if (ticketMasterAttractionsDto is null)
+    {
+        <p>Loading</p>
+    }
+    else if (ticketMasterAttractionsDto._Embedded is null)
+    {
+        <p>No Attractions Found!</p>
+    }
+    else
+    {
+        @foreach (var attraction in ticketMasterAttractionsDto._Embedded.Attractions)
+        {
+            <div class="card" style="width: 18rem;" @onclick="(() => HandleCardClick(attraction.Id))">
+                <div class="card-body">
+                    <span style="display: inline-block;"><img src="@attraction.Images[0].Url" width="50" height="50" alt="Card image cap"></span>
+                    <span style="display: inline-block;"><h6 class="card-title">@attraction.Name</h6></span>
+                </div>
+            </div>
+        }
+        <a href="#" class="btn btn-primary">Select</a>
+        <p>@selectedAttractionId</p>
+    }
+</div>
+
+@code {
+    private TicketMasterAttractionsDto? ticketMasterAttractionsDto;
+    private string searchTerm = "";
+    private string selectedAttractionId { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var attractionsResponse = await attractionService.GetAttractionsAsync("PHISH");
+        ticketMasterAttractionsDto = attractionsResponse;
+    }
+
+    private void OnInput(ChangeEventArgs e)
+    {
+        searchTerm = (string)e.Value!;
+    }
+
+    private async Task SearchAttractions()
+    {
+        var attractionsResponse = await attractionService.GetAttractionsAsync(searchTerm);
+        ticketMasterAttractionsDto = attractionsResponse;
+    }
+
+    private void HandleCardClick(string id)
+    {
+        selectedAttractionId = id;
+    }
+}
