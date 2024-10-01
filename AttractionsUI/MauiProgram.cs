@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AttractionsUI.Components.Services;
+using Microsoft.Extensions.Logging;
 
 namespace AttractionsUI
 {
@@ -15,9 +16,10 @@ namespace AttractionsUI
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSingleton<AttractionsService>();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 
