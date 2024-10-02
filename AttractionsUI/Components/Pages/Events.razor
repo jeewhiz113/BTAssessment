@@ -17,16 +17,16 @@
         <div>
             <h5 style="display: inline-block;">@AttractionName</h5>
             <span style="display: inline-block; float: right;">
-                <img src="/website.svg">
+                <a href="#"><img src="/website.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/spotify.svg">
+                <a href="#"><img src="/spotify.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/youtube.svg">
+                <a href="#"><img src="/youtube.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/x.svg">
+                <a href="#"><img src="/x.svg"></a>
             </span>
         </div>
 
@@ -39,26 +39,48 @@
         <div>
             <h5 style="display: inline-block;">@AttractionName</h5>
             <span style="display: inline-block; float: right;">
-                <img src="/website.svg">
+                <a href="#"><img src="/website.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/spotify.svg">
+                <a href="#"><img src="/spotify.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/youtube.svg">
+                <a href="#"><img src="/youtube.svg"></a>
             </span>
             <span style="display: inline-block; float: right;">
-                <img src="/x.svg">
+                <a href="#"><img src="/x.svg"></a>
             </span>
+        </div>
+
+        <div>
+            @foreach (var e in ticketMasterEventsDto._Embedded.Events)
+            {
+                <div class="card">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                @if (@e._embedded.Venues[0].Images != null)
+                                {
+                                    <img src="@e._embedded.Venues[0].Images[0].Url" style="height: 100%; width:100%;" alt="Card image cap">
+                                }else
+                                {
+                                    <p>No Image</p>
+                                }
+                                
+                            </div>
+                            <div class="col-8">
+                                <div>@ConvertToFormattedDate(e.Dates.Start.LocalDate)</div>
+                                <div>@e.Name</div>
+                                <div>@e._embedded.Venues[0].Name, @e._embedded.Venues[0].City.Name @e._embedded.Venues[0].State.StateCode</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            }
         </div>
     }
 </div>
-
-<h1>Event Details for Attraction @AttractionId</h1>
-<h1>Event Details for Attraction @ImageUrl</h1>
-<h1>Event Details for Attraction @AttractionName</h1>
-
-
 
 @code {
     [Parameter]
@@ -83,5 +105,14 @@
     {
         var eventsResponse = await attractionService.GetEventsAsync(AttractionId);
         ticketMasterEventsDto = eventsResponse;
+    }
+
+    private string ConvertToFormattedDate(string date)
+    {
+        if (DateTime.TryParse(date, out DateTime parsedDate))
+        {
+            return parsedDate.ToString("dddd, MMMM dd, yyyy");
+        }
+        return "Invalid date format";
     }
 }
