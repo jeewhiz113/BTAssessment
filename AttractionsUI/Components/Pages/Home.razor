@@ -25,7 +25,7 @@
         
             @foreach (var attraction in ticketMasterAttractionsDto._Embedded.Attractions)
             {
-            <div class="card d-flex justify-content-center" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url))">
+            <div class="card d-flex justify-content-center" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url, attraction.Name))">
                     <div class="card-body">
                         <span style="display: inline-block;"><img src="@attraction.Images[0].Url" width="50" height="50" alt="Card image cap"></span>
                         <span style="display: inline-block;"><h6 class="card-title">@attraction.Name</h6></span>
@@ -35,7 +35,7 @@
             @if (selectedAttractionId != "")
             {
                 <div class="mx-auto text-center pt-3">
-                    <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}")">
+                    <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}&name={attractionName}")">
                         <div class="btn btn-primary">Select</div>
                     </NavLink>
                 </div>
@@ -49,6 +49,7 @@
     private string searchTerm = "";
     private string selectedAttractionId { get; set; } = "";
     private string imageParam { get; set; } = "default";
+    private string attractionName { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,9 +69,10 @@
         selectedAttractionId = "";
     }
 
-    private void HandleCardClick(string id, string imageUrl)
+    private void HandleCardClick(string id, string imageUrl, string name)
     {
         selectedAttractionId = id;
         imageParam = imageUrl;
+        attractionName = name;
     }
 }

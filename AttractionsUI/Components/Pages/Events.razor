@@ -1,15 +1,72 @@
 @page "/counter/{attractionId}"
 @inject NavigationManager Navigation
+@inject AttractionsService attractionService
+
+@if (ImageUrl != null)
+{
+    <img src="@ImageUrl" alt="Attraction Image" style="width: 100%; height: auto;">
+}
+
+<div class="pt-3">
+    @if (ticketMasterEventsDto is null)
+    {
+        <p>Loading</p>
+    }
+    else if (ticketMasterEventsDto._Embedded is null)
+    {
+        <div>
+            <h5 style="display: inline-block;">@AttractionName</h5>
+            <span style="display: inline-block; float: right;">
+                <img src="/website.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/spotify.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/youtube.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/x.svg">
+            </span>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <img src="/noresultsfound.svg" />
+        </div>
+    }
+    else
+    {
+        <div>
+            <h5 style="display: inline-block;">@AttractionName</h5>
+            <span style="display: inline-block; float: right;">
+                <img src="/website.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/spotify.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/youtube.svg">
+            </span>
+            <span style="display: inline-block; float: right;">
+                <img src="/x.svg">
+            </span>
+        </div>
+    }
+</div>
 
 <h1>Event Details for Attraction @AttractionId</h1>
 <h1>Event Details for Attraction @ImageUrl</h1>
+<h1>Event Details for Attraction @AttractionName</h1>
+
 
 
 @code {
     [Parameter]
     public string AttractionId { get; set; }
-    
+
     public string ImageUrl { get; set; }
+
+    public string AttractionName { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -17,5 +74,14 @@
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
         ImageUrl = query["imageUrl"];
+        AttractionName = query["name"];
+    }
+
+    private TicketMasterEventsDto? ticketMasterEventsDto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var eventsResponse = await attractionService.GetEventsAsync(AttractionId);
+        ticketMasterEventsDto = eventsResponse;
     }
 }

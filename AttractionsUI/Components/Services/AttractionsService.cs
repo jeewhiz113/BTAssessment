@@ -25,5 +25,18 @@ namespace AttractionsUI.Components.Services
             });
             return data;
         }
+
+        public async Task<TicketMasterEventsDto?> GetEventsAsync(string attractionId)
+        {
+            var eventsUrl = $"http://10.0.2.2:5246/api/events?attractionId={attractionId}";
+            //var eventsUrl = $"http://localhost:5246/api/events?attractionId={attractionId}";
+            var response = await _httpClient.GetAsync(eventsUrl);
+            var dataString = await response.Content.ReadAsStringAsync();
+            TicketMasterEventsDto? data = JsonSerializer.Deserialize<TicketMasterEventsDto>(dataString, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            return data;
+        }
     }
 }
