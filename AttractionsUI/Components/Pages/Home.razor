@@ -25,7 +25,7 @@
         
             @foreach (var attraction in ticketMasterAttractionsDto._Embedded.Attractions)
             {
-            <div class="card d-flex justify-content-center" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url, attraction.Name))">
+            <div class="card d-flex justify-content-center" @onclick="(() => HandleCardClick(attraction.Id, attraction.Images[0].Url, attraction.Name, attraction))">
                     <div class="card-body">
                         <span style="display: inline-block;"><img src="@attraction.Images[0].Url" width="50" height="50" alt="Card image cap"></span>
                         <span style="display: inline-block;"><h6 class="card-title">@attraction.Name</h6></span>
@@ -35,7 +35,7 @@
             @if (selectedAttractionId != "")
             {
                 <div class="mx-auto text-center pt-3">
-                    <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}&name={attractionName}")">
+                    <NavLink class="nav-link" href="@($"counter/{selectedAttractionId}?imageUrl={imageParam}&name={attractionName}&youtubeLink={youtubeLink}&twitterLink={twitterLink}&iTunesLink={iTunesLink}&homepageLink={homepageLink}")">
                         <div class="btn btn-primary">Select</div>
                     </NavLink>
                 </div>
@@ -50,6 +50,10 @@
     private string selectedAttractionId { get; set; } = "";
     private string imageParam { get; set; } = "default";
     private string attractionName { get; set; }
+    private string youtubeLink { get; set; } = "https://www.youtube.com/";
+    private string twitterLink { get; set; } = "https://x.com/";
+    private string iTunesLink { get; set; } = "https://www.apple.com/itunes/?cid=OAS-US-DOMAINS-itunes.com";
+    private string homepageLink { get; set; } = "https://www.google.com/";
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,10 +73,37 @@
         selectedAttractionId = "";
     }
 
-    private void HandleCardClick(string id, string imageUrl, string name)
+    private void HandleCardClick(string id, string imageUrl, string name, AttractionDto attractionDto)
     {
         selectedAttractionId = id;
         imageParam = imageUrl;
         attractionName = name;
+        if (RetrieveLink(attractionDto.ExternalLinks, "Youtube") != "")
+        {
+            youtubeLink = RetrieveLink(attractionDto.ExternalLinks, "Youtube");
+        }
+        if (RetrieveLink(attractionDto.ExternalLinks, "Twitter") != "")
+        {
+            twitterLink = RetrieveLink(attractionDto.ExternalLinks, "Twitter");
+        }
+        if (RetrieveLink(attractionDto.ExternalLinks, "Itunes") != "")
+        {
+            iTunesLink = RetrieveLink(attractionDto.ExternalLinks, "Itunes");
+        }
+        if (RetrieveLink(attractionDto.ExternalLinks, "Homepage") != "")
+        {
+            homepageLink = RetrieveLink(attractionDto.ExternalLinks, "Homepage");
+        }
+    }
+
+    private string RetrieveLink(ExternalLinksDto externalLinksDto, string link)
+    {
+        var fieldNames = typeof(ExternalLinksDto).GetProperties().Select(f => f.Name).ToList();
+        if (fieldNames.Contains(link) && externalLinksDto.GetType().GetProperty(link).GetValue(externalLinksDto, null) != null)
+        {
+            LinkDto[] list = (LinkDto[])externalLinksDto.GetType().GetProperty(link).GetValue(externalLinksDto, null);
+            return list[0].Url;
+        }
+        return "";
     }
 }
